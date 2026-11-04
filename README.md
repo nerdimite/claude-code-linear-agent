@@ -72,6 +72,7 @@ It also lists every problem found while building this, with fixes.
 bun run dev        # http://localhost:3000
 bun run test       # vitest
 bun run typecheck
+bun run deploy -- <vercel-scope>   # deploys HEAD with no git metadata attached
 ```
 
 The session-to-app callback leg only works against the deployed host. The cloud session's auto-mode safety check blocks POSTs to tunnels and other unnamed hosts.
