@@ -98,3 +98,7 @@ These come from the routines API:
 - **One-way:** the API can start a session, but can't read, message or cancel one. Everything here works around that through the callback and wait protocol.
 - **Rate limits:** 30 starts per hour per routine, and 100 per hour per account.
 - **Session titles:** every session is titled after the routine's name.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
