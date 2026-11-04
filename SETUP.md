@@ -2,6 +2,8 @@
 
 Stand up your own instance, in order. Every problem hit while building it is listed at the end, with its fix. Follow it in order. Secrets go in a gitignored `.env`, never in the repo.
 
+To have a coding agent do all of this for you, see the Quick start in the README. It runs `.claude/skills/setup-linear-agent`, which follows these same steps.
+
 ## 0. Prerequisites
 
 - A claude.ai **Pro, Max, Team or Enterprise** account with Claude Code on the web enabled. On Team or Enterprise, an Owner must have **Scheduled tasks (Routines)** turned on under Organization settings → Capabilities → Remote sessions.

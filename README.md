@@ -32,23 +32,38 @@ Linear issue delegated to "Claude Code"
 - **Linear:** workspace admin rights, to create a private OAuth app.
 - **Claude:** each user needs a Pro, Max, Team or Enterprise plan with Claude Code on the web and GitHub connected. On Team or Enterprise, an Owner must enable scheduled tasks (routines).
 
-## Quick start
+## Quick start: let your coding agent set it up
+
+Clone the repo and open your coding agent in it:
 
 ```sh
-bun install
-vercel link
-vercel integration add upstash/upstash-kv
-vercel deploy --prod
+git clone https://github.com/nerdimite/claude-code-linear-agent.git
+cd claude-code-linear-agent
+claude
 ```
 
-Then follow **[SETUP.md](SETUP.md)**:
-1. secrets and env vars
-2. the Linear OAuth app
-3. the app token
-4. connecting each user
-5. smoke tests
+Then paste this prompt:
 
-It also lists every problem found while building this, with fixes.
+```text
+Set up this repository end to end with the setup-linear-agent skill
+(.claude/skills/setup-linear-agent/SKILL.md). Do every step yourself: install what's missing,
+deploy to Vercel, add Upstash Redis, generate the secrets, create the Linear OAuth app with
+its icon, store the app token, create my Claude Code task on claude.ai, connect it at /connect
+and run the connection test. Use a browser tool for Linear and claude.ai if you have one
+(Claude in Chrome first, where I'm already signed in). Ask me everything you need in one go,
+get my OK once before creating anything, and stop only for steps a human must do.
+```
+
+The skill does each phase, checks what's already done first (so you can rerun it to resume), and keeps every secret in a gitignored `.env`. It's written for Claude Code, but any agent that can read the skill file and run shell commands can follow it.
+
+What you'll still do by hand:
+- sign in to Vercel, Linear (as a workspace admin) and claude.ai
+- accept the Upstash marketplace terms once
+- without a browser tool, the Linear and claude.ai forms (the agent gives you the exact values)
+
+**Adding a teammate:** they open `<your-app>/connect` and follow the page, or ask their agent to "run the setup-linear-agent skill in connect mode for `<your-app>`".
+
+**Doing it by hand:** follow **[SETUP.md](SETUP.md)**. It also lists every problem found while building this, with fixes.
 
 ## Configuration
 
