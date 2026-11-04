@@ -1,6 +1,6 @@
 ---
-name: setup-linear-agent
-description: Set up this repository end to end, autonomously - Vercel project and deploy, Upstash Redis, secrets, the Linear OAuth app (with icon), the app token, the person's Claude Code task (routine) and the /connect step, then a live test. Use when someone says "set this up", "/setup-linear-agent", "deploy the Linear agent", "connect my Claude account", or "add a teammate". Pass "connect" to only connect one more person to an existing deployment.
+name: setup-claude-linear-agent
+description: Set up this repository end to end, autonomously - Vercel project and deploy, Upstash Redis, secrets, the Linear OAuth app (with icon), the app token, the person's Claude Code task (routine) and the /connect step, then a live test. Use when someone says "set this up", "/setup-claude-linear-agent", "deploy the Linear agent", "connect my Claude account", or "add a teammate". Pass "connect" to only connect one more person to an existing deployment.
 ---
 
 # Set up the Claude Code Linear Agent
@@ -21,7 +21,7 @@ You set up this repo for a person's own Linear workspace, doing every step yours
 - **No commits are needed.** Setup changes nothing tracked. If you do commit or open a PR, add no AI attribution (no `Co-Authored-By` trailer, no "Generated with" footer).
 - **Stop and ask** after 2-3 failed attempts at the same browser action, and say what you tried.
 
-Script paths below are relative to the repo root: `S=.claude/skills/setup-linear-agent/scripts`.
+Script paths below are relative to the repo root: `S=.claude/skills/setup-claude-linear-agent/scripts`.
 
 ## Phase 0: preflight
 

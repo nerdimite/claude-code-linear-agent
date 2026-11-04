@@ -2,7 +2,7 @@
 
 Stand up your own instance, in order. Every problem hit while building it is listed at the end, with its fix. Follow it in order. Secrets go in a gitignored `.env`, never in the repo.
 
-To have a coding agent do all of this for you, see the Quick start in the README. It runs `.claude/skills/setup-linear-agent`, which follows these same steps.
+To have a coding agent do all of this for you, see the Quick start in the README. It runs `.claude/skills/setup-claude-linear-agent`, which follows these same steps.
 
 ## 0. Prerequisites
 

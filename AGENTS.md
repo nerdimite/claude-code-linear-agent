@@ -10,4 +10,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Setting up this repo
 
-To deploy and configure this project for someone (Vercel, Redis, Linear app, Claude Code task, /connect), follow `.claude/skills/setup-linear-agent/SKILL.md`. Its scripts are in that skill's `scripts/` folder; `scripts/check.sh` reports which steps are already done. `SETUP.md` is the same procedure for humans, with troubleshooting.
+To deploy and configure this project for someone (Vercel, Redis, Linear app, Claude Code task, /connect), follow `.claude/skills/setup-claude-linear-agent/SKILL.md`. Its scripts are in that skill's `scripts/` folder; `scripts/check.sh` reports which steps are already done. `SETUP.md` is the same procedure for humans, with troubleshooting.

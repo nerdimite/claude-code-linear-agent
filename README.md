@@ -45,8 +45,8 @@ claude
 Then paste this prompt:
 
 ```text
-Set up this repository end to end with the setup-linear-agent skill
-(.claude/skills/setup-linear-agent/SKILL.md). Do every step yourself: install what's missing,
+Set up this repository end to end with the setup-claude-linear-agent skill
+(.claude/skills/setup-claude-linear-agent/SKILL.md). Do every step yourself: install what's missing,
 deploy to Vercel, add Upstash Redis, generate the secrets, create the Linear OAuth app with
 its icon, store the app token, create my Claude Code task on claude.ai, connect it at /connect
 and run the connection test. Use a browser tool for Linear and claude.ai if you have one
@@ -61,7 +61,7 @@ What you'll still do by hand:
 - accept the Upstash marketplace terms once
 - without a browser tool, the Linear and claude.ai forms (the agent gives you the exact values)
 
-**Adding a teammate:** they open `<your-app>/connect` and follow the page, or ask their agent to "run the setup-linear-agent skill in connect mode for `<your-app>`".
+**Adding a teammate:** they open `<your-app>/connect` and follow the page, or ask their agent to "run the setup-claude-linear-agent skill in connect mode for `<your-app>`".
 
 **Doing it by hand:** follow **[SETUP.md](SETUP.md)**. It also lists every problem found while building this, with fixes.
 
