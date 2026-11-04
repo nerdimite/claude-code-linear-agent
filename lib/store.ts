@@ -23,7 +23,8 @@ export type Install = {
 /** "issue" runs serve a Linear agent session; "test" runs come from the connect page's test button. */
 export type RunKind = "issue" | "test";
 
-export type RunStatus = "starting" | "live" | "finished" | "stopped" | "failed";
+/** "idle": the session finished its work but is still waiting for follow-ups until `idleUntil`. */
+export type RunStatus = "starting" | "live" | "idle" | "finished" | "stopped" | "failed";
 
 export type Run = {
   runId: string;
@@ -38,6 +39,8 @@ export type Run = {
   createdAt: number;
   lastCallbackAt?: number;
   watchdogNotifiedAt?: number;
+  /** Epoch ms when an idle session stops waiting for follow-ups. */
+  idleUntil?: number;
   /** Last plan the session sent, so the bot can close it out on done. */
   plan?: { content: string; status: "pending" | "inProgress" | "completed" | "canceled" }[];
 };
@@ -65,7 +68,7 @@ export const store = {
     const r = redis();
     await r.set(`run:${run.runId}`, run, { ex: RUN_TTL });
     await r.set(`session:${run.agentSessionId}`, run.runId, { ex: RUN_TTL });
-    if (run.status === "live" || run.status === "starting") await r.sadd("runs:live", run.runId);
+    if (run.status === "live" || run.status === "starting" || run.status === "idle") await r.sadd("runs:live", run.runId);
     else await r.srem("runs:live", run.runId);
   },
   async getRun(runId: string): Promise<Run | null> {
@@ -82,6 +85,9 @@ export const store = {
   async pushInbox(runId: string, message: string): Promise<void> {
     await redis().rpush(`inbox:${runId}`, message);
     await redis().expire(`inbox:${runId}`, RUN_TTL);
+  },
+  async inboxLength(runId: string): Promise<number> {
+    return redis().llen(`inbox:${runId}`);
   },
   async drainInbox(runId: string): Promise<string[]> {
     const r = redis();

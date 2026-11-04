@@ -12,8 +12,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ runId: string 
 
   const run = await store.getRun(runId);
   if (!run) return Response.json({ error: "unknown run" }, { status: 404 });
-  if (run.status !== "live" && run.status !== "starting") {
+  if (run.status === "stopped" || (run.kind === "test" && run.status !== "live" && run.status !== "starting")) {
     return Response.json({ inbox: [], stop: true, reason: `run is ${run.status}` }, { status: 410 });
+  }
+  // A finished or idle session that reports again is being worked in directly (for example someone chatting in
+  // claude.ai): reopen it so the work still shows up in Linear.
+  const reopened = run.status === "finished" || run.status === "failed" || run.status === "idle";
+  if (reopened) {
+    run.status = "live";
+    run.idleUntil = undefined;
   }
 
   let raw: unknown;
@@ -39,7 +46,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ runId: string 
   try {
     const updated = await applyEvent(run, event);
     const inbox = updated.status === "live" ? await store.drainInbox(runId) : [];
-    console.log(JSON.stringify({ event: "callback", runId, type: event.type, status: updated.status, inbox: inbox.length }));
+    console.log(JSON.stringify({ event: "callback", runId, type: event.type, status: updated.status, inbox: inbox.length, reopened }));
     return Response.json({ inbox, stop: false });
   } catch (err) {
     console.error(JSON.stringify({ event: "callback.failed", runId, type: event.type, error: (err as Error).message }));

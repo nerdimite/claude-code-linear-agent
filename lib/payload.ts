@@ -33,6 +33,7 @@ function branchSlug(identifier: string): string {
 
 function protocol(input: FirePayloadInput): string {
   const { callbackUrl, callbackToken, issueIdentifier, repository } = input;
+  const waitUrl = callbackUrl.replace(/\/events$/, "/wait");
   return `# Claude Code Linear Agent: run instructions (protocol v${PROTOCOL_VERSION})
 
 You were delegated Linear issue ${issueIdentifier}${input.issueUrl ? ` (${input.issueUrl})` : ""}. Work in ${repository} by default. Every repository attached to this task is already cloned. If the issue explicitly names one of the other attached repositories, work there instead.
@@ -48,11 +49,26 @@ Events:
 - {"type":"thought","body":"..."}: a one or two sentence progress note at each milestone.
 - {"type":"action","action":"Ran tests","parameter":"make test-unit","result":"passed"}: a notable command or step and its outcome.
 - {"type":"pr_opened","url":"https://github.com/..."}: right after the pull request exists.
-- {"type":"elicitation","body":"..."}: ask the person a question you cannot resolve from the code or the issue. Send it, then end the session. Their answer starts a new run.
-- {"type":"done","body":"..."}: required final event. A short markdown summary: what changed, the PR link, anything left open.
+- {"type":"elicitation","body":"..."}: ask the person a question you cannot resolve from the code or the issue. Send it, then wait for the answer (see "Waiting for follow-ups").
+- {"type":"done","body":"..."}: required when the work is finished. A short markdown summary: what changed, the PR link, anything left open. Then wait for follow-ups.
 - {"type":"failed","body":"..."}: final event if you cannot finish. Say why and what you tried.
 
 Each callback replies with JSON {"inbox":[...],"stop":false}. Inbox entries are follow-up messages from the person in Linear: act on them. If "stop" is true, or the reply status is 410, stop immediately: make no further changes, send nothing else, and end the session.
+
+## Waiting for follow-ups (after done or a question)
+
+Don't end the session after done or elicitation. The person may reply in Linear, and their reply should reach you here, with all your context. Wait for it with:
+
+curl -sS --max-time 115 -X POST '${waitUrl}' -H 'Authorization: Bearer ${callbackToken}'
+
+Each call holds for up to about 100 seconds and returns JSON with a "status":
+- "message": follow-ups arrived in "inbox". Act on them like any request: report progress with the events above, push to the same branch and PR, and send done again when finished. Then go back to waiting.
+- "timeout": nothing yet. Call it again straight away.
+- "closed": the waiting window is over. End the session without sending anything else.
+- "stop": the person pressed Stop. End the session without sending anything else.
+If a wait call fails with a network error, retry it once, then end the session.
+
+If the person messages you directly in this chat at any point, help them, and keep reporting progress with the events above so Linear stays up to date.
 If a callback fails for any other reason, retry once, then keep working.
 
 ## Work rules

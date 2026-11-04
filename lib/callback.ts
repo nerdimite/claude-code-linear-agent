@@ -1,5 +1,24 @@
 import { emitActivity, updateSession, type PlanStep } from "./linear";
+import { env } from "./env";
 import { store, type Run } from "./store";
+
+/** A finished session keeps listening for follow-ups for a while, so a reply lands in the same session. */
+export function enterIdle(run: Run): void {
+  const minutes = env.idleWindowMinutes;
+  if (minutes > 0) {
+    run.status = "idle";
+    run.idleUntil = Date.now() + minutes * 60_000;
+  } else {
+    run.status = "finished";
+    run.idleUntil = undefined;
+  }
+}
+
+function idleNote(run: Run): string {
+  if (run.status !== "idle" || !run.idleUntil) return "";
+  const until = new Date(run.idleUntil).toISOString().slice(11, 16);
+  return `\n\n_Reply here before ${until} UTC to continue in this same session. After that, a reply starts a new session._`;
+}
 
 const PLAN_STATUSES = new Set(["pending", "inProgress", "completed", "canceled"]);
 const MAX_BODY = 20_000;
@@ -70,18 +89,18 @@ export async function applyEvent(run: Run, event: CallbackEvent): Promise<Run> {
       await emitActivity(org, sid, { type: "action", action: "Opened pull request", parameter: event.url });
       break;
     case "elicitation":
-      run.status = "finished";
-      await emitActivity(org, sid, { type: "elicitation", body: event.body });
+      enterIdle(run);
+      await emitActivity(org, sid, { type: "elicitation", body: `${event.body}${idleNote(run)}` });
       await store.appendTranscript(sid, { role: "agent", kind: "question", body: event.body, at: Date.now() });
       break;
     case "done":
-      run.status = "finished";
+      enterIdle(run);
       if (run.plan?.some((s) => s.status === "pending" || s.status === "inProgress")) {
         const closed = run.plan.map((s) => (s.status === "canceled" ? s : { ...s, status: "completed" as const }));
         await updateSession(org, sid, { plan: closed });
         run.plan = closed;
       }
-      await emitActivity(org, sid, { type: "response", body: event.body });
+      await emitActivity(org, sid, { type: "response", body: `${event.body}${idleNote(run)}` });
       await store.appendTranscript(sid, { role: "agent", kind: "summary", body: event.body, at: Date.now() });
       break;
     case "failed":

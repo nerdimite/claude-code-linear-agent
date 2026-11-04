@@ -24,6 +24,14 @@ export const env = {
   get encryptionKey() {
     return process.env.TOKEN_ENCRYPTION_KEY ?? required("BOT_SIGNING_SECRET");
   },
+  /** How long a finished session keeps waiting for follow-ups in the same session. */
+  get idleWindowMinutes() {
+    return Number(process.env.IDLE_WINDOW_MINUTES ?? 30);
+  },
+  /** How long one wait call holds before returning "timeout". Keep under Claude Code's 2-minute Bash timeout. */
+  get waitSeconds() {
+    return Number(process.env.WAIT_SECONDS ?? 100);
+  },
   get cronSecret() {
     return process.env.CRON_SECRET;
   },

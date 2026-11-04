@@ -45,6 +45,7 @@ CRON_SECRET=$(openssl rand -hex 24)
 `PUBLIC_BASE_URL` is the production URL from step 1, with no trailing slash. Also set:
 
 - `TOKEN_ENCRYPTION_KEY` (`openssl rand -base64 32`): encrypts each person's routine token at rest
+- `IDLE_WINDOW_MINUTES` (default 30; 0 turns it off) and `WAIT_SECONDS` (default 100): same-session follow-up window and wait-call length
 - `DEFAULT_REPOSITORY` (required, for example `your-org/your-repo`) and `DEFAULT_BASE_BRANCH` (default `main`)
 
 ## 4. Linear OAuth app
@@ -110,9 +111,10 @@ Create throwaway issues assigned to yourself and **delegated** to the bot. Cance
 2. **Reachability:** a fire whose text asks the session to `curl -X POST <PUBLIC_BASE_URL>/api/health` with `{"type":"thought","body":"probe"}`. Expect `HTTP 200`. If auto mode refuses it, see T1.
 3. **No-change run:** plan, then an action, then done. Check the Linear session shows the plan, the session link, a response, and **In Progress**.
 4. **Elicitation:** the session asks a question and ends; you reply in the thread, and a continuation run starts and finishes.
-5. **Live follow-up:** the session sleeps at checkpoints; reply mid-run. Expect "Passed your message to the running session", and the session acting on it.
-6. **Stop:** send a stop from Linear, or replay a signed `prompted` webhook with `agentActivity.signal = "stop"`. The next callback returns 410 and the session halts.
-7. **PR:** a docs-only change. Check:
+5. **Same-session follow-up:** after a run sends done, reply in the thread within the idle window. Expect "Picked up your follow-up in the same session", an answer within seconds, and still only one session link.
+6. **Live follow-up:** the session sleeps at checkpoints; reply mid-run. Expect "Passed your message to the running session", and the session acting on it.
+7. **Stop:** send a stop from Linear, or replay a signed `prompted` webhook with `agentActivity.signal = "stop"`. The next callback returns 410 and the session halts.
+8. **PR:** a docs-only change. Check:
    - base `DEFAULT_BASE_BRANCH`
    - one changed file
    - a `feat/` or `fix/` branch
@@ -183,6 +185,9 @@ inst = {"organizationId": org, "appUserId": app_user_id, "accessToken": token, "
 - `workspace`: the app has no token for that Linear workspace yet (step 5).
 - `linear`: the token exchange failed. Check `/api/auth/linear/callback` is in the app's redirect URIs.
 
-**T14. Following up directly in the claude.ai chat after the run finished.**
-- The bot answers that session's callbacks with 410 (stop), because the run is marked finished. Follow up in Linear instead; that starts a continuation run.
-- Open item: reopen finished runs on a new callback.
+**T14. (Fixed) Following up directly in the claude.ai chat after the run finished.**
+- Used to get 410 (stop). A finished or idle run that reports again now reopens, and its next wait call returns it to the idle window. Only a Linear stop returns 410.
+
+**T16. Same-session follow-ups need the session to keep waiting.**
+- The routine fire API can't message an existing session. So after done (or a question), the session long-polls `/api/runs/<id>/wait` for `IDLE_WINDOW_MINUTES`. The saved instructions name that wait URL as part of the reporting channel; the safety check allowed the repeated calls in testing.
+- Each wait call holds for `WAIT_SECONDS` (default 100), because Claude Code's Bash tool times out at 2 minutes by default.

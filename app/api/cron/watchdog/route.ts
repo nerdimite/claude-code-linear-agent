@@ -22,6 +22,17 @@ export async function GET(req: Request) {
     if (!run) continue;
     const lastSeen = run.lastCallbackAt ?? run.createdAt;
     const quietFor = now - lastSeen;
+    if (run.status === "idle") {
+      // Waiting for follow-ups is quiet by design. Close it once the window (plus a grace period) has passed.
+      if ((run.idleUntil ?? 0) + 10 * MINUTE < now) {
+        run.status = "finished";
+        await store.saveRun(run);
+        results[runId] = "idle_closed";
+      } else {
+        results[runId] = "idle";
+      }
+      continue;
+    }
     if (run.kind === "test") {
       if (quietFor > 15 * MINUTE) {
         run.status = "failed";

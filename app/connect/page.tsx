@@ -165,8 +165,8 @@ function HowToUse() {
             session.
           </li>
           <li>
-            <span className="font-medium text-secondary">Follow up:</span> reply in the issue's agent thread. A running session gets the message at its next update;
-            a finished one gets a continuation session.
+            <span className="font-medium text-secondary">Follow up:</span> reply in the issue's agent thread. The same session picks it up, whether it's still
+            working or finished in the last 30 minutes. After that, a reply starts a continuation session.
           </li>
           <li>
             <span className="font-medium text-secondary">Stop:</span> use Stop in Linear. The session halts at its next update.

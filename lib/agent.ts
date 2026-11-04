@@ -136,7 +136,7 @@ export async function handlePrompted(p: AgentSessionEventWebhookPayload): Promis
   const run = await store.getRunForSession(s.id);
 
   if (activity.signal === "stop") {
-    if (run && (run.status === "live" || run.status === "starting")) {
+    if (run && (run.status === "live" || run.status === "starting" || run.status === "idle")) {
       run.status = "stopped";
       await store.saveRun(run);
     }
@@ -153,11 +153,14 @@ export async function handlePrompted(p: AgentSessionEventWebhookPayload): Promis
   if (!message) return;
   await store.appendTranscript(s.id, { role: "user", kind: "follow-up", body: message, at: Date.now() });
 
-  if (run && run.status === "live") {
+  const listening = run && run.status === "idle" && (run.idleUntil ?? 0) > Date.now();
+  if (run && (run.status === "live" || listening)) {
     await store.pushInbox(run.runId, message);
     await emitActivity(p.organizationId, s.id, {
       type: "thought",
-      body: "Passed your message to the running session. It picks it up at its next progress report.",
+      body: listening
+        ? "Sending this to the same session, which is waiting for follow-ups. It picks it up within seconds."
+        : "Passed your message to the running session. It picks it up at its next progress report.",
     });
     return;
   }

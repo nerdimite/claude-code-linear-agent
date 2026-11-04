@@ -33,6 +33,8 @@ describe("buildFirePayload", () => {
     expect(text).toContain("with base develop");
     expect(text).toContain("If the issue explicitly names one of the other attached repositories");
     expect(text).not.toContain("unit tests");
+    expect(text).toContain("https://bot.example.com/api/runs/run_abc/wait");
+    expect(text).toContain("Waiting for follow-ups");
     expect(text).toContain("read its description back from GitHub");
     expect(text).toContain("<linear-issue>\n" + base.promptContext + "\n</linear-issue>");
     expect(text).not.toContain("TRUNCATED");
