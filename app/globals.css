@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens: a subset of a warm-neutral, ink-first system. Components use the semantic tokens
+ * (bg-*, text-*, border-*) only, never raw colours.
+ */
+:root {
+  --bg-page: #fefefd;
+  --bg-card: #ffffff;
+  --bg-subtle: rgba(110, 105, 96, 0.04);
+  --bg-hover: rgba(110, 105, 96, 0.07);
+  --bg-track: rgba(110, 105, 96, 0.07);
+  --bg-selected: rgba(110, 105, 96, 0.11);
+  --bg-well: #f3f3f1;
+  --bg-inverse: #151413;
+  --bg-inverse-hover: #2e2d2b;
+
+  --text-primary: #151413;
+  --text-body: #1e1d1c;
+  --text-secondary: #393836;
+  --text-muted: #545351;
+  --text-subtle: #6c6b68;
+  --text-faint: #a3a29e;
+  --text-on-inverse: #ffffff;
+
+  --border-subtle: rgba(96, 92, 84, 0.085);
+  --border-default: rgba(96, 92, 84, 0.13);
+  --border-control: rgba(96, 92, 84, 0.22);
+  --border-hover: rgba(96, 92, 84, 0.4);
+  --focus-ring: #151413;
+
+  --success-fg: #15803d;
+  --success-bg: rgba(21, 128, 61, 0.08);
+  --success-border: rgba(21, 128, 61, 0.2);
+  --warning-fg: #b45309;
+  --warning-bg: #fff8eb;
+  --warning-border: rgba(180, 83, 9, 0.22);
+  --error-fg: #b91c1c;
+  --error-bg: #fef2f2;
+  --error-border: rgba(185, 28, 28, 0.2);
+  --bg-error-hover: #991b1b;
+  --accent-fg: #c2410c;
+
+  --selection-bg: rgba(59, 130, 246, 0.22);
+}
+
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+
+  --color-page: var(--bg-page);
+  --color-card: var(--bg-card);
+  --color-subtle: var(--bg-subtle);
+  --color-hover: var(--bg-hover);
+  --color-track: var(--bg-track);
+  --color-selected: var(--bg-selected);
+  --color-well: var(--bg-well);
+  --color-inverse: var(--bg-inverse);
+  --color-inverse-hover: var(--bg-inverse-hover);
+
+  --color-primary: var(--text-primary);
+  --color-body: var(--text-body);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-subtle-fg: var(--text-subtle);
+  --color-faint: var(--text-faint);
+  --color-on-inverse: var(--text-on-inverse);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border: var(--border-default);
+  --color-control: var(--border-control);
+  --color-border-hover: var(--border-hover);
+  --color-focus-ring: var(--focus-ring);
+
+  --color-success-fg: var(--success-fg);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-error-fg: var(--error-fg);
+  --color-error-bg: var(--error-bg);
+  --color-error-border: var(--error-border);
+  --color-error-hover: var(--bg-error-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-transparent: transparent;
+
+  --font-display: var(--font-loaded-display, "Instrument Sans"), system-ui, sans-serif;
+  --font-sans: var(--font-loaded-sans, Geist), system-ui, sans-serif;
+  --font-mono: var(--font-loaded-mono, "JetBrains Mono"), ui-monospace, monospace;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-full: 9999px;
+
+  --shadow-card: 0 1px 2px rgba(20, 18, 16, 0.04);
+  --shadow-floating: 0 10px 28px rgba(20, 18, 16, 0.14), 0 2px 6px rgba(20, 18, 16, 0.06);
+
+  --spacing-control-sm: 32px;
+  --spacing-control-md: 36px;
+}
+
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+@utility type-title-section {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+@utility type-title-sub {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+@utility type-body-strong {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+@utility type-ui {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+@utility type-small {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+@utility type-code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--bg-page);
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--selection-bg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0ms !important;
+      animation-duration: 0ms !important;
+    }
+  }
+}

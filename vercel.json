@@ -1,0 +1,19 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/watchdog",
+      "schedule": "*/5 * * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/bot-icon.png",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
+}
