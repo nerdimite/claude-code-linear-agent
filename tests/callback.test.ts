@@ -11,6 +11,9 @@ describe("parseEvent", () => {
       ],
     });
   });
+  it("accepts a relayed user message", () => {
+    expect(parseEvent({ type: "user_message", body: "why did you pick that?" })).toEqual({ type: "user_message", body: "why did you pick that?" });
+  });
   it("rejects unknown types and empty bodies", () => {
     expect(parseEvent({ type: "rm -rf" })).toBeNull();
     expect(parseEvent({ type: "done", body: "" })).toBeNull();

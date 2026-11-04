@@ -35,6 +35,7 @@ describe("buildFirePayload", () => {
     expect(text).not.toContain("unit tests");
     expect(text).toContain("https://bot.example.com/api/runs/run_abc/wait");
     expect(text).toContain("Waiting for follow-ups");
+    expect(text).toContain('{"type":"user_message"');
     expect(text).toContain("read its description back from GitHub");
     expect(text).toContain("<linear-issue>\n" + base.promptContext + "\n</linear-issue>");
     expect(text).not.toContain("TRUNCATED");

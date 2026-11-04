@@ -68,7 +68,7 @@ Each call holds for up to about 100 seconds and returns JSON with a "status":
 - "stop": the person pressed Stop. End the session without sending anything else.
 If a wait call fails with a network error, retry it once, then end the session.
 
-If the person messages you directly in this chat at any point, help them, and keep reporting progress with the events above so Linear stays up to date.
+If the person messages you directly in this chat at any point (not through the inbox), first send their message word for word as {"type":"user_message","body":"..."} so the Linear thread shows what they asked. Then help them, and keep reporting progress with the events above so Linear stays up to date.
 If a callback fails for any other reason, retry once, then keep working.
 
 ## Work rules

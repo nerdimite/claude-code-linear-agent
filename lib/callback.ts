@@ -1,4 +1,4 @@
-import { emitActivity, updateSession, type PlanStep } from "./linear";
+import { emitActivity, updateSession, userDisplayName, type PlanStep } from "./linear";
 import { env } from "./env";
 import { store, type Run } from "./store";
 
@@ -30,7 +30,8 @@ export type CallbackEvent =
   | { type: "pr_opened"; url: string }
   | { type: "elicitation"; body: string }
   | { type: "done"; body: string }
-  | { type: "failed"; body: string };
+  | { type: "failed"; body: string }
+  | { type: "user_message"; body: string };
 
 function str(v: unknown, max = MAX_BODY): string {
   return typeof v === "string" ? v.slice(0, max) : "";
@@ -53,6 +54,7 @@ export function parseEvent(raw: unknown): CallbackEvent | null {
     case "thought":
     case "elicitation":
     case "done":
+    case "user_message":
     case "failed": {
       const body = str(e.body);
       return body ? ({ type: e.type, body } as CallbackEvent) : null;
@@ -81,6 +83,14 @@ export async function applyEvent(run: Run, event: CallbackEvent): Promise<Run> {
     case "thought":
       await emitActivity(org, sid, { type: "thought", body: event.body });
       break;
+    case "user_message": {
+      // Someone typed to the session directly in claude.ai. Linear only lets people create prompts, so mirror it as a quote.
+      const who = await userDisplayName(org, run.linearUserId);
+      const quoted = event.body.split("\n").map((line) => `> ${line}`).join("\n");
+      await emitActivity(org, sid, { type: "thought", body: `**${who}, in Claude Code:**\n\n${quoted}` });
+      await store.appendTranscript(sid, { role: "user", kind: "chat", body: event.body, at: Date.now() });
+      break;
+    }
     case "action":
       await emitActivity(org, sid, { type: "action", action: event.action, parameter: event.parameter ?? "", result: event.result });
       break;

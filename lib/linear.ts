@@ -140,6 +140,16 @@ type IssueStateQuery = {
 };
 
 /** Move the issue to the team's first "started" state unless it is already started, completed or canceled. */
+/** A Linear user's display name, for attributing messages the bot relays. Falls back to "Someone". */
+export async function userDisplayName(organizationId: string, userId: string): Promise<string> {
+  try {
+    const data = await gql<{ user: { displayName: string; name: string } }>(organizationId, `query($id: String!) { user(id: $id) { displayName name } }`, { id: userId });
+    return data.user.name || data.user.displayName || "Someone";
+  } catch {
+    return "Someone";
+  }
+}
+
 export async function moveToStarted(organizationId: string, issueId: string): Promise<boolean> {
   const data = await gql<IssueStateQuery>(
     organizationId,
