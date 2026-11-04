@@ -16,7 +16,7 @@ Linear issue delegated to "Claude Code"
 ```
 
 - **Per-user accounts.** Everyone connects their own Claude account at `/connect`: a read-only Linear sign-in, then the fire URL and token of a Claude Code task they create. Tokens are stored AES-256-GCM encrypted.
-- **Follow-ups in the same session.** A reply in the issue's agent thread reaches the same session. A running session gets it with its next progress report. A finished session keeps long-polling `/api/runs/<id>/wait` for `IDLE_WINDOW_MINUTES` (default 30), so it answers with full context. After that, a reply starts a continuation session that carries the earlier conversation. Chatting with the session directly in claude.ai also works: its reports reopen the run.
+- **Follow-ups in the same session.** A reply in the issue's agent thread reaches the same session. A running session gets it with its next progress report. A finished session keeps long-polling `/api/runs/<id>/wait` for `IDLE_WINDOW_MINUTES` (default 60), so it answers with full context. After that, a reply starts a continuation session that carries the earlier conversation. Chatting with the session directly in claude.ai also works: its reports reopen the run.
 - **Stop.** Linear's Stop makes the next callback return `stop`/410, and the session halts.
 - **Watchdog.** A cron job posts a note when a session goes quiet (for example, while it waits on an approval) and gives up after 2 hours.
 - **Pull requests.**
@@ -62,7 +62,7 @@ It also lists every problem found while building this, with fixes.
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | Upstash Redis, set by the integration |
 | `DEFAULT_REPOSITORY` | Repo sessions work in by default, for example `your-org/your-repo` |
 | `DEFAULT_BASE_BRANCH` | Base branch for that repo's PRs (default `main`) |
-| `IDLE_WINDOW_MINUTES` | How long a finished session waits for same-session follow-ups (default 30; 0 turns it off) |
+| `IDLE_WINDOW_MINUTES` | How long a finished session waits for same-session follow-ups (default 60; 0 turns it off) |
 | `WAIT_SECONDS` | How long each wait call holds (default 100, under Claude Code's 2-minute Bash timeout) |
 | `ROUTINES_JSON` | Optional admin fallback: `{"<linear-user-id>": {"fireUrl", "token"}}` |
 

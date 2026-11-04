@@ -154,6 +154,11 @@ function StepList({ baseUrl }: { baseUrl: string }) {
   );
 }
 
+function formatWindow(minutes: number): string {
+  if (minutes % 60 === 0) return minutes === 60 ? "hour" : `${minutes / 60} hours`;
+  return `${minutes} minutes`;
+}
+
 function HowToUse() {
   return (
     <Card>
@@ -166,7 +171,7 @@ function HowToUse() {
           </li>
           <li>
             <span className="font-medium text-secondary">Follow up:</span> reply in the issue's agent thread. The same session picks it up, whether it's still
-            working or finished in the last 30 minutes. After that, a reply starts a continuation session.
+            working or finished in the last {formatWindow(env.idleWindowMinutes)}. After that, a reply starts a continuation session.
           </li>
           <li>
             <span className="font-medium text-secondary">Stop:</span> use Stop in Linear. The session halts at its next update.

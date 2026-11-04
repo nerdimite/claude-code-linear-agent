@@ -26,7 +26,7 @@ export const env = {
   },
   /** How long a finished session keeps waiting for follow-ups in the same session. */
   get idleWindowMinutes() {
-    return Number(process.env.IDLE_WINDOW_MINUTES ?? 30);
+    return Number(process.env.IDLE_WINDOW_MINUTES ?? 60);
   },
   /** How long one wait call holds before returning "timeout". Keep under Claude Code's 2-minute Bash timeout. */
   get waitSeconds() {

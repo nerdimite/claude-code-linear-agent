@@ -45,7 +45,7 @@ CRON_SECRET=$(openssl rand -hex 24)
 `PUBLIC_BASE_URL` is the production URL from step 1, with no trailing slash. Also set:
 
 - `TOKEN_ENCRYPTION_KEY` (`openssl rand -base64 32`): encrypts each person's routine token at rest
-- `IDLE_WINDOW_MINUTES` (default 30; 0 turns it off) and `WAIT_SECONDS` (default 100): same-session follow-up window and wait-call length
+- `IDLE_WINDOW_MINUTES` (default 60; 0 turns it off) and `WAIT_SECONDS` (default 100): same-session follow-up window and wait-call length
 - `DEFAULT_REPOSITORY` (required, for example `your-org/your-repo`) and `DEFAULT_BASE_BRANCH` (default `main`)
 
 ## 4. Linear OAuth app
